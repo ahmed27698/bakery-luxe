@@ -4,7 +4,11 @@
     class="fixed top-0 left-0 right-0 z-500 p-5! transition-all duration-500"
     :class="isTransparent ? 'py-6 header-transparent' : 'bg-warm-white/95 backdrop-luxury shadow-sm py-3'"
   >
-    <div class="max-w-350 mx-auto px-6 flex items-center justify-between gap-6">
+    <div class="max-w-350 mx-auto px-6 flex items-center justify-between gap-6"
+      :style="isTransparent
+        ? { '--nav-color': 'rgba(255,255,255,0.92)', '--nav-hover-bg': 'rgba(255,255,255,0.12)', '--nav-hover-color': '#fff' }
+        : { '--nav-color': 'rgba(61,31,11,0.8)',    '--nav-hover-bg': 'rgba(245,236,215,0.8)',   '--nav-hover-color': '#3D1F0B' }"
+    >
       <!-- Logo -->
       <RouterLink to="/" class="flex items-center gap-3 group" @click="closeMobile">
         <div class="relative w-10 h-10 shrink-0">
@@ -73,22 +77,22 @@
           Order Now
         </RouterLink>
         <!-- Hamburger (below xl) -->
-        <button @click="toggleMobile" class="xl:hidden ml-1 hamburger-btn" :class="isTransparent ? 'hamburger-light' : 'hamburger-dark'" aria-label="Menu">
+        <button @click="toggleMobile" class="xl:hidden ml-1 hamburger-btn" aria-label="Menu">
           <span class="hamburger-bar transition-all duration-300 origin-center"
-            :class="mobileOpen ? 'rotate-45 translate-y-2' : ''"></span>
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'rotate-45 translate-y-2' : '']"></span>
           <span class="hamburger-bar transition-all duration-300"
-            :class="mobileOpen ? 'opacity-0 scale-x-0' : ''"></span>
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'opacity-0 scale-x-0' : '']"></span>
           <span class="hamburger-bar transition-all duration-300 origin-center"
-            :class="mobileOpen ? '-rotate-45 -translate-y-2' : ''"></span>
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? '-rotate-45 -translate-y-2' : '']"></span>
         </button>
       </div>
     </div>
 
-    <!-- Search Overlay (teleported to avoid backdrop-filter containment) -->
+    <!-- Search Overlay  -->
     <Teleport to="body">
       <Transition name="search-overlay">
         <div v-if="searchOpen"
-          class="fixed inset-0 z-[900] bg-chocolate/97 backdrop-blur-sm flex flex-col items-center justify-center px-6"
+          class="fixed inset-0 z-900 bg-chocolate/97 backdrop-blur-sm flex flex-col items-center justify-center px-6"
           @click.self="toggleSearch">
           <button @click="toggleSearch"
             class="absolute top-7 right-7 w-11 h-11 flex items-center justify-center rounded-2xl border border-white/15 text-cream/60 hover:text-cream hover:border-white/40 transition-all">
@@ -127,10 +131,10 @@
       </Transition>
     </Teleport>
 
-    <!-- Mobile Menu (teleported to avoid backdrop-filter containment) -->
+    <!-- Mobile Menu  -->
     <Teleport to="body">
       <Transition name="mobile-menu">
-        <div v-if="mobileOpen" class="fixed inset-0 z-[490] bg-warm-white overflow-y-auto" style="padding-top: 80px">
+        <div v-if="mobileOpen" class="fixed inset-0 z-490 bg-warm-white overflow-y-auto" style="padding-top: 80px">
           <nav class="flex flex-col gap-1 px-4 mb-6">
             <RouterLink v-for="item in flatNav" :key="item.to" :to="item.to" @click="closeMobile"
               class="flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-cream font-display text-lg text-chocolate transition-colors">
@@ -242,36 +246,36 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* ── Nav links (desktop) ── */
+/* ── Nav links (desktop) — color driven by CSS var set on parent ── */
 .nav-link {
   font-family: 'Outfit', system-ui, sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgba(61, 31, 11, 0.8);
+  color: var(--nav-color, rgba(61, 31, 11, 0.8));
   padding: 0.5rem 0.875rem;
   border-radius: 0.75rem;
-  transition: all 0.2s;
+  transition: color 0.3s, background 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
 }
-.nav-link:hover { color: #3D1F0B; background: rgba(245, 236, 215, 0.8); }
-
-.header-transparent .nav-link { color: rgba(255, 255, 255, 0.9); }
-.header-transparent .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.nav-link:hover {
+  color: var(--nav-hover-color, #3D1F0B);
+  background: var(--nav-hover-bg, rgba(245, 236, 215, 0.8));
+}
 
 /* ── Icon buttons ── */
 .icon-btn {
   width: 2.5rem; height: 2.5rem;
   display: flex; align-items: center; justify-content: center;
   border-radius: 0.75rem;
-  color: rgba(61, 31, 11, 0.7);
-  transition: all 0.2s;
+  color: var(--nav-color, rgba(61, 31, 11, 0.7));
+  transition: color 0.3s, background 0.2s;
 }
-.icon-btn:hover { background: rgba(245, 236, 215, 0.8); color: #3D1F0B; }
-
-.header-transparent .icon-btn { color: rgba(255, 255, 255, 0.9); }
-.header-transparent .icon-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.icon-btn:hover {
+  background: var(--nav-hover-bg, rgba(245, 236, 215, 0.8));
+  color: var(--nav-hover-color, #3D1F0B);
+}
 
 /* ── Hamburger ── */
 .hamburger-btn {
@@ -281,16 +285,13 @@ onUnmounted(() => {
   border-radius: 0.75rem;
   transition: background 0.2s;
 }
-.hamburger-btn:hover { background: rgba(245, 236, 215, 0.8); }
-.hamburger-light:hover { background: rgba(255, 255, 255, 0.12); }
+.hamburger-btn:hover { background: var(--nav-hover-bg, rgba(245, 236, 215, 0.8)); }
 
 .hamburger-bar {
   display: block;
   width: 20px; height: 2px;
   border-radius: 9999px;
 }
-.hamburger-dark .hamburger-bar { background: #3D1F0B; }
-.hamburger-light .hamburger-bar { background: #ffffff; }
 
 /* ── Buttons ── */
 .btn-primary {
