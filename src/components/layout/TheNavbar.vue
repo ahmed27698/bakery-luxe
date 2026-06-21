@@ -32,7 +32,7 @@
       <nav class="hidden xl:flex items-center gap-1">
         <template v-for="item in navItems" :key="item.label">
           <div class="relative group" v-if="item.children">
-            <button class="nav-link flex items-center gap-1.5">
+            <button class="nav-link inline-flex items-center gap-1.5">
               {{ item.label }}
               <AppIcon name="chevrondown" :size="12" class="transition-transform group-hover:rotate-180" />
             </button>
@@ -52,28 +52,28 @@
               </div>
             </div>
           </div>
-          <RouterLink v-else :to="item.to" class="nav-link">{{ item.label }}</RouterLink>
+          <RouterLink v-else :to="item.to" class="nav-link inline-flex items-center">{{ item.label }}</RouterLink>
         </template>
       </nav>
 
       <!-- Actions -->
       <div class="flex items-center gap-2">
         <!-- Search -->
-        <button @click="toggleSearch" class="icon-btn flex" aria-label="Search">
+        <button @click="toggleSearch" class="icon-btn flex items-center justify-center" aria-label="Search">
           <AppIcon name="search" :size="20" />
         </button>
         <!-- Wishlist -->
-        <RouterLink to="/wishlist" class="icon-btn flex relative" aria-label="Wishlist">
+        <RouterLink to="/wishlist" class="icon-btn flex items-center justify-center relative" aria-label="Wishlist">
           <AppIcon name="heart" :size="20" />
           <span v-if="wishCount > 0" class="badge">{{ wishCount }}</span>
         </RouterLink>
         <!-- Cart -->
-        <button @click="openCart" class="icon-btn relative" aria-label="Cart">
+        <button @click="openCart" class="icon-btn flex items-center justify-center relative" aria-label="Cart">
           <AppIcon name="shoppingcart" :size="20" />
           <span v-if="cartCount > 0" class="badge animate-bounce">{{ cartCount }}</span>
         </button>
         <!-- Order CTA -->
-        <RouterLink to="/shop" class="hidden lg:flex btn-primary text-sm ml-1">
+        <RouterLink to="/shop" class="hidden lg:inline-flex items-center btn-primary text-sm ml-1">
           Order Now
         </RouterLink>
         <!-- Hamburger (below xl) -->
@@ -279,8 +279,6 @@ onUnmounted(() => {
   padding: 0.5rem 0.875rem;
   border-radius: 0.75rem;
   transition: color 0.3s, background 0.2s;
-  display: inline-flex;
-  align-items: center;
   gap: 0.375rem;
 }
 .nav-link:hover {
@@ -291,7 +289,6 @@ onUnmounted(() => {
 /* ── Icon buttons ── */
 .icon-btn {
   width: 2.5rem; height: 2.5rem;
-  display: flex; align-items: center; justify-content: center;
   border-radius: 0.75rem;
   color: var(--nav-color, rgba(61, 31, 11, 0.7));
   transition: color 0.3s, background 0.2s;
@@ -311,7 +308,6 @@ onUnmounted(() => {
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.3s;
-  display: inline-flex; align-items: center;
 }
 .btn-primary:hover { background: #6B3A20; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 
@@ -324,7 +320,6 @@ onUnmounted(() => {
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.3s;
-  display: inline-flex; align-items: center;
 }
 .btn-outline:hover { border-color: #D4A853; color: #D4A853; }
 
