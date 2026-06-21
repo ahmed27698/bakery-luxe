@@ -142,25 +142,38 @@
       </Transition>
     </Teleport>
 
-    <!-- Mobile Menu  -->
-    <Teleport to="body">
-      <Transition name="mobile-menu">
-        <div v-if="mobileOpen" class="fixed inset-0 z-490 bg-warm-white overflow-y-auto" style="padding-top: 80px">
-          <nav class="flex flex-col gap-1 px-4 mb-6">
-            <RouterLink v-for="item in flatNav" :key="item.to" :to="item.to" @click="closeMobile"
-              class="flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-cream font-display text-lg text-chocolate transition-colors">
-              <AppIcon :name="item.icon" :size="20" class="text-amber shrink-0" />
-              {{ item.label }}
-            </RouterLink>
-          </nav>
-          <div class="flex gap-3 px-4 pb-10">
-            <RouterLink to="/cart" @click="closeMobile" class="btn-primary flex-1 justify-center">Cart ({{ cartCount }})</RouterLink>
-            <RouterLink to="/wishlist" @click="closeMobile" class="btn-outline flex-1 justify-center">Wishlist</RouterLink>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
   </header>
+
+  <!-- Mobile Menu — sibling of header, outside backdrop-filter containment -->
+  <div
+    v-if="mobileOpen"
+    class="xl:hidden fixed inset-0 bg-warm-white overflow-y-auto"
+    style="z-index: 490; padding-top: 80px"
+  >
+    <nav class="flex flex-col gap-1 px-4 mb-6 mt-2">
+      <RouterLink
+        v-for="item in flatNav" :key="item.to"
+        :to="item.to"
+        @click="closeMobile"
+        class="flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-cream font-display text-lg text-chocolate transition-colors"
+      >
+        <AppIcon :name="item.icon" :size="20" class="text-amber shrink-0" />
+        {{ item.label }}
+      </RouterLink>
+    </nav>
+    <div class="flex gap-3 px-4 pb-10">
+      <RouterLink
+        to="/cart"
+        @click="closeMobile"
+        class="flex-1 flex items-center justify-center bg-chocolate text-cream px-5 py-2.5 rounded-2xl font-body font-medium text-sm transition-all hover:bg-chocolate-light"
+      >Cart ({{ cartCount }})</RouterLink>
+      <RouterLink
+        to="/wishlist"
+        @click="closeMobile"
+        class="flex-1 flex items-center justify-center border border-chocolate/20 text-chocolate px-5 py-2.5 rounded-2xl font-body font-medium text-sm transition-all hover:border-amber hover:text-amber"
+      >Wishlist</RouterLink>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -333,7 +346,4 @@ onUnmounted(() => {
 .search-overlay-enter-active, .search-overlay-leave-active { transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .search-overlay-enter-from, .search-overlay-leave-to { opacity: 0; transform: scale(0.97); }
 
-.mobile-menu-enter-active { transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-.mobile-menu-leave-active { transition: opacity 0.25s ease, transform 0.3s ease; }
-.mobile-menu-enter-from, .mobile-menu-leave-to { opacity: 0; transform: translateY(-12px); }
 </style>
