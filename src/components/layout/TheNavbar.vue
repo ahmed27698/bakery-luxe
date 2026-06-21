@@ -77,13 +77,24 @@
           Order Now
         </RouterLink>
         <!-- Hamburger (below xl) -->
-        <button @click="toggleMobile" class="xl:hidden ml-1 hamburger-btn" aria-label="Menu">
-          <span class="hamburger-bar transition-all duration-300 origin-center"
-            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'rotate-45 translate-y-2' : '']"></span>
-          <span class="hamburger-bar transition-all duration-300"
-            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'opacity-0 scale-x-0' : '']"></span>
-          <span class="hamburger-bar transition-all duration-300 origin-center"
-            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? '-rotate-45 -translate-y-2' : '']"></span>
+        <button
+          @click="toggleMobile"
+          class="xl:hidden ml-1 w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl transition-all duration-200"
+          :class="isTransparent ? 'hover:bg-white/10' : 'hover:bg-cream'"
+          aria-label="Menu"
+        >
+          <span
+            class="block w-5 h-0.5 rounded-full transition-all duration-300 origin-center"
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'rotate-45 translate-y-2' : '']"
+          ></span>
+          <span
+            class="block w-5 h-0.5 rounded-full transition-all duration-300"
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? 'opacity-0 scale-x-0' : '']"
+          ></span>
+          <span
+            class="block w-5 h-0.5 rounded-full transition-all duration-300 origin-center"
+            :class="[isTransparent ? 'bg-white' : 'bg-chocolate', mobileOpen ? '-rotate-45 -translate-y-2' : '']"
+          ></span>
         </button>
       </div>
     </div>
@@ -275,22 +286,6 @@ onUnmounted(() => {
 .icon-btn:hover {
   background: var(--nav-hover-bg, rgba(245, 236, 215, 0.8));
   color: var(--nav-hover-color, #3D1F0B);
-}
-
-/* ── Hamburger ── */
-.hamburger-btn {
-  width: 2.5rem; height: 2.5rem;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px;
-  border-radius: 0.75rem;
-  transition: background 0.2s;
-}
-.hamburger-btn:hover { background: var(--nav-hover-bg, rgba(245, 236, 215, 0.8)); }
-
-.hamburger-bar {
-  display: block;
-  width: 20px; height: 2px;
-  border-radius: 9999px;
 }
 
 /* ── Buttons ── */
