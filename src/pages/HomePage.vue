@@ -457,7 +457,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import ProductCard from '@/components/ui/ProductCard.vue'
@@ -556,7 +556,7 @@ onMounted(() => {
     .to(heroSubEl.value, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
     .to(heroCtaEl.value, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
     .to(heroStatsEl.value, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
-    .to(heroCardEl.value, { opacity: 1, x: 0, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.6')
+    .to(heroCardEl.value ?? {}, { opacity: 1, x: 0, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.6')
     .to(scrollIndicatorEl.value, { opacity: 1, duration: 0.5 }, '-=0.2')
 
   // Hero bg set initial state
@@ -654,10 +654,17 @@ onMounted(() => {
   window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
 
   // ── Mouse parallax on hero ───────────────────────
-  document.addEventListener('mousemove', (e) => {
+  const onMouseMove = (e) => {
+    if (!heroBgEl.value) return
     const xPct = (e.clientX / window.innerWidth - 0.5) * 20
     const yPct = (e.clientY / window.innerHeight - 0.5) * 20
     gsap.to(heroBgEl.value, { x: xPct, y: yPct, duration: 1.5, ease: 'power1.out', overwrite: false })
+  }
+  document.addEventListener('mousemove', onMouseMove)
+
+  onUnmounted(() => {
+    document.removeEventListener('mousemove', onMouseMove)
+    ScrollTrigger.getAll().forEach(t => t.kill())
   })
 })
 </script>

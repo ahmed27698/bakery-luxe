@@ -59,11 +59,11 @@
       <!-- Actions -->
       <div class="flex items-center gap-2">
         <!-- Search -->
-        <button @click="toggleSearch" class="icon-btn hidden md:flex" aria-label="Search">
+        <button @click="toggleSearch" class="icon-btn flex" aria-label="Search">
           <AppIcon name="search" :size="20" />
         </button>
         <!-- Wishlist -->
-        <RouterLink to="/wishlist" class="icon-btn hidden md:flex relative" aria-label="Wishlist">
+        <RouterLink to="/wishlist" class="icon-btn flex relative" aria-label="Wishlist">
           <AppIcon name="heart" :size="20" />
           <span v-if="wishCount > 0" class="badge">{{ wishCount }}</span>
         </RouterLink>
