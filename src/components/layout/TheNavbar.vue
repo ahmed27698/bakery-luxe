@@ -2,11 +2,11 @@
   <header
     ref="navEl"
     class="fixed top-0 left-0 right-0 z-500 p-5! transition-all duration-500"
-    :class="scrolled || mobileOpen || !isHome ? 'bg-warm-white/95 backdrop-luxury shadow-sm py-3' : 'py-6 header-transparent'"
+    :class="isTransparent ? 'py-6 header-transparent' : 'bg-warm-white/95 backdrop-luxury shadow-sm py-3'"
   >
     <div class="max-w-350 mx-auto px-6 flex items-center justify-between gap-6">
       <!-- Logo -->
-      <RouterLink to="/" class="flex items-center gap-3 group " @click="closeMobile">
+      <RouterLink to="/" class="flex items-center gap-3 group" @click="closeMobile">
         <div class="relative w-10 h-10 shrink-0">
           <svg viewBox="0 0 40 40" class="w-full h-full">
             <circle cx="20" cy="20" r="19" stroke="#D4A853" stroke-width="1" fill="none"
@@ -16,20 +16,22 @@
           </svg>
         </div>
         <div class="leading-none">
-          <div class="font-display font-bold text-xl tracking-tight transition-colors duration-500" :class="scrolled || mobileOpen || !isHome ? 'text-chocolate' : 'text-white'">Maison Dorée</div>
+          <div
+            class="font-display font-bold text-xl tracking-tight transition-colors duration-500"
+            :class="isTransparent ? 'text-white' : 'text-chocolate'"
+          >Maison Dorée</div>
           <div class="font-accent text-amber text-[11px] tracking-[0.25em] uppercase">Artisan Bakery</div>
         </div>
       </RouterLink>
 
-      <!-- Desktop Nav -->
-      <nav class="hidden xl:flex items-center gap-1 ">
+      <!-- Desktop Nav (xl+) -->
+      <nav class="hidden xl:flex items-center gap-1">
         <template v-for="item in navItems" :key="item.label">
           <div class="relative group" v-if="item.children">
             <button class="nav-link flex items-center gap-1.5">
               {{ item.label }}
               <AppIcon name="chevrondown" :size="12" class="transition-transform group-hover:rotate-180" />
             </button>
-            <!-- Dropdown -->
             <div class="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 translate-y-2 group-hover:translate-y-0">
               <div class="bg-warm-white border border-amber-100 rounded-2xl shadow-2xl p-2 min-w-50">
                 <RouterLink
@@ -70,38 +72,35 @@
         <RouterLink to="/shop" class="hidden lg:flex btn-primary text-sm ml-1">
           Order Now
         </RouterLink>
-        <!-- Mobile hamburger -->
-        <button @click="toggleMobile" class="xl:hidden icon-btn ml-1" aria-label="Menu">
-          <div class="flex flex-col gap-1.5 w-5">
-            <span class="block h-0.5 rounded-full transition-all duration-300" :class="[scrolled || mobileOpen || !isHome ? 'bg-chocolate' : 'bg-white', mobileOpen ? 'rotate-45 translate-y-2' : '']"></span>
-            <span class="block h-0.5 rounded-full transition-all duration-300" :class="[scrolled || mobileOpen || !isHome ? 'bg-chocolate' : 'bg-white', mobileOpen ? 'opacity-0 scale-x-0' : '']"></span>
-            <span class="block h-0.5 rounded-full transition-all duration-300" :class="[scrolled || mobileOpen || !isHome ? 'bg-chocolate' : 'bg-white', mobileOpen ? '-rotate-45 -translate-y-2' : '']"></span>
-          </div>
+        <!-- Hamburger (below xl) -->
+        <button @click="toggleMobile" class="xl:hidden ml-1 hamburger-btn" :class="isTransparent ? 'hamburger-light' : 'hamburger-dark'" aria-label="Menu">
+          <span class="hamburger-bar transition-all duration-300 origin-center"
+            :class="mobileOpen ? 'rotate-45 translate-y-2' : ''"></span>
+          <span class="hamburger-bar transition-all duration-300"
+            :class="mobileOpen ? 'opacity-0 scale-x-0' : ''"></span>
+          <span class="hamburger-bar transition-all duration-300 origin-center"
+            :class="mobileOpen ? '-rotate-45 -translate-y-2' : ''"></span>
         </button>
       </div>
     </div>
 
-    <!-- Search Overlay (full-screen) -->
+    <!-- Search Overlay (teleported to avoid backdrop-filter containment) -->
     <Teleport to="body">
       <Transition name="search-overlay">
         <div v-if="searchOpen"
-          class="fixed inset-0 z-900 bg-chocolate/97 backdrop-blur-sm flex flex-col items-center justify-center px-6"
+          class="fixed inset-0 z-[900] bg-chocolate/97 backdrop-blur-sm flex flex-col items-center justify-center px-6"
           @click.self="toggleSearch">
-          <!-- Close -->
           <button @click="toggleSearch"
             class="absolute top-7 right-7 w-11 h-11 flex items-center justify-center rounded-2xl border border-white/15 text-cream/60 hover:text-cream hover:border-white/40 transition-all">
             <AppIcon name="x" :size="20" />
           </button>
-          <!-- Label -->
           <p class="font-accent text-amber/80 text-sm tracking-[0.35em] uppercase mb-10">What are you looking for?</p>
-          <!-- Input -->
           <div class="relative w-full max-w-2xl">
             <AppIcon name="search" :size="22" class="absolute left-6 top-1/2 -translate-y-1/2 text-amber pointer-events-none" />
             <input ref="searchInput" v-model="searchQuery" @input="onSearch" @keydown.escape="toggleSearch"
               type="text" placeholder="sourdough, croissants, cakes..."
               class="w-full pl-16 pr-6 py-5 bg-white/8 border border-white/20 rounded-2xl font-body text-xl text-cream placeholder-cream/25 focus:outline-none focus:border-amber/70 focus:bg-white/12 transition-all" />
           </div>
-          <!-- Results -->
           <div v-if="searchResults.length" class="w-full max-w-2xl mt-4 bg-warm-white rounded-2xl overflow-hidden shadow-2xl">
             <RouterLink v-for="r in searchResults.slice(0,5)" :key="r.id" :to="`/shop/${r.slug}`"
               @click="toggleSearch"
@@ -117,7 +116,6 @@
           <p v-else-if="searchQuery" class="mt-8 font-body text-cream/40 text-base">
             No results for "<span class="text-cream/70">{{ searchQuery }}</span>"
           </p>
-          <!-- Popular hints -->
           <div v-if="!searchQuery" class="mt-10 flex flex-wrap gap-2 justify-center max-w-lg">
             <button v-for="hint in ['Sourdough', 'Croissant', 'Birthday Cake', 'Macarons', 'Tart']" :key="hint"
               @click="searchQuery = hint.toLowerCase(); onSearch()"
@@ -129,27 +127,29 @@
       </Transition>
     </Teleport>
 
-    <!-- Mobile Menu -->
-    <Transition name="mobile-menu">
-      <div v-if="mobileOpen" class="xl:hidden fixed inset-0 top-0 z-490 bg-warm-white/98 backdrop-luxury pt-24 px-6 overflow-y-auto">
-        <nav class="flex flex-col gap-1 mb-6">
-          <RouterLink v-for="item in flatNav" :key="item.to" :to="item.to" @click="closeMobile"
-            class="flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-cream font-display text-lg text-chocolate transition-colors">
-            <AppIcon :name="item.icon" :size="20" class="text-amber shrink-0" />
-            {{ item.label }}
-          </RouterLink>
-        </nav>
-        <div class="flex gap-3 pb-8">
-          <RouterLink to="/cart" @click="closeMobile" class="btn-primary flex-1 text-center">Cart ({{ cartCount }})</RouterLink>
-          <RouterLink to="/wishlist" @click="closeMobile" class="btn-outline flex-1 text-center">Wishlist</RouterLink>
+    <!-- Mobile Menu (teleported to avoid backdrop-filter containment) -->
+    <Teleport to="body">
+      <Transition name="mobile-menu">
+        <div v-if="mobileOpen" class="fixed inset-0 z-[490] bg-warm-white overflow-y-auto" style="padding-top: 80px">
+          <nav class="flex flex-col gap-1 px-4 mb-6">
+            <RouterLink v-for="item in flatNav" :key="item.to" :to="item.to" @click="closeMobile"
+              class="flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-cream font-display text-lg text-chocolate transition-colors">
+              <AppIcon :name="item.icon" :size="20" class="text-amber shrink-0" />
+              {{ item.label }}
+            </RouterLink>
+          </nav>
+          <div class="flex gap-3 px-4 pb-10">
+            <RouterLink to="/cart" @click="closeMobile" class="btn-primary flex-1 justify-center">Cart ({{ cartCount }})</RouterLink>
+            <RouterLink to="/wishlist" @click="closeMobile" class="btn-outline flex-1 justify-center">Wishlist</RouterLink>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </header>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCart } from '@/stores/cart'
 import { useWishlist } from '@/stores/wishlist'
@@ -168,6 +168,13 @@ const searchOpen = ref(false)
 const searchQuery = ref('')
 const searchResults = ref([])
 const searchInput = ref(null)
+
+const isTransparent = computed(() => !scrolled.value && !mobileOpen.value && isHome.value)
+
+// Lock body scroll when mobile menu is open
+watch(mobileOpen, (val) => {
+  document.body.style.overflow = val ? 'hidden' : ''
+})
 
 const navItems = [
   { label: 'Shop', children: [
@@ -228,10 +235,14 @@ function onSearch() {
 }
 
 onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  document.body.style.overflow = ''
+})
 </script>
 
 <style scoped>
+/* ── Nav links (desktop) ── */
 .nav-link {
   font-family: 'Outfit', system-ui, sans-serif;
   font-size: 0.875rem;
@@ -249,6 +260,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .header-transparent .nav-link { color: rgba(255, 255, 255, 0.9); }
 .header-transparent .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
 
+/* ── Icon buttons ── */
 .icon-btn {
   width: 2.5rem; height: 2.5rem;
   display: flex; align-items: center; justify-content: center;
@@ -256,11 +268,31 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   color: rgba(61, 31, 11, 0.7);
   transition: all 0.2s;
 }
-.icon-btn:hover { background: #FFF8F0; color: #3D1F0B; }
+.icon-btn:hover { background: rgba(245, 236, 215, 0.8); color: #3D1F0B; }
 
 .header-transparent .icon-btn { color: rgba(255, 255, 255, 0.9); }
 .header-transparent .icon-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 
+/* ── Hamburger ── */
+.hamburger-btn {
+  width: 2.5rem; height: 2.5rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px;
+  border-radius: 0.75rem;
+  transition: background 0.2s;
+}
+.hamburger-btn:hover { background: rgba(245, 236, 215, 0.8); }
+.hamburger-light:hover { background: rgba(255, 255, 255, 0.12); }
+
+.hamburger-bar {
+  display: block;
+  width: 20px; height: 2px;
+  border-radius: 9999px;
+}
+.hamburger-dark .hamburger-bar { background: #3D1F0B; }
+.hamburger-light .hamburger-bar { background: #ffffff; }
+
+/* ── Buttons ── */
 .btn-primary {
   background: #3D1F0B;
   color: #F5ECD7;
@@ -287,6 +319,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 .btn-outline:hover { border-color: #D4A853; color: #D4A853; }
 
+/* ── Badge ── */
 .badge {
   position: absolute;
   top: -4px; right: -4px;
@@ -300,10 +333,11 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   line-height: 1;
 }
 
+/* ── Transitions ── */
 .search-overlay-enter-active, .search-overlay-leave-active { transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .search-overlay-enter-from, .search-overlay-leave-to { opacity: 0; transform: scale(0.97); }
 
-.mobile-menu-enter-active { transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-.mobile-menu-leave-active { transition: all 0.3s ease; }
-.mobile-menu-enter-from, .mobile-menu-leave-to { opacity: 0; transform: translateX(100%); }
+.mobile-menu-enter-active { transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.mobile-menu-leave-active { transition: opacity 0.25s ease, transform 0.3s ease; }
+.mobile-menu-enter-from, .mobile-menu-leave-to { opacity: 0; transform: translateY(-12px); }
 </style>
